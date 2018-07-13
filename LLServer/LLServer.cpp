@@ -5,6 +5,8 @@
 #include "stdafx.h"
 #include "LLServer.h"
 #include "LLServerDlg.h"
+#include "LLMysqlOperate.h"
+#include "LogModule.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -78,8 +80,11 @@ BOOL CLLServerApp::InitInstance()
 	// Change the registry key under which our settings are stored
 	// TODO: You should modify this string to be something appropriate
 	// such as the name of your company or organization
-	SetRegistryKey(_T("Local AppWizard-Generated Applications"));
+	SetRegistryKey(_T("Liaoliao"));
 
+	//创建单实例
+	CLogModule*           pLog = new CLogModule();
+	CLLMysqlOperate*      pSqlOperate = new CLLMysqlOperate();
 
 
 	//initialize operations
@@ -138,5 +143,17 @@ int CLLServerApp::ExitInstance()
 		m_GdiPlusToken = NULL;
 	}
 	
+	//删除实例
+	if (CLogModule::getSingletonPtr())
+	{
+		CLogModule* pLog = CLogModule::getSingletonPtr();
+		SAFE_DELETE(pLog);
+	}
+	if (CLLMysqlOperate::getSingletonPtr())
+	{
+		CLLMysqlOperate* pSqlOpe = CLLMysqlOperate::getSingletonPtr();
+		SAFE_DELETE(pSqlOpe);
+	}
+
 	return CWinApp::ExitInstance();
 }

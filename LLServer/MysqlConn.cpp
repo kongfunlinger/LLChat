@@ -77,8 +77,8 @@ int CMysqlConn::SetSchema(string strDBName)
 	{
 		//选择要连接的数据库
 		m_pConnect->setSchema(strDBName.c_str());
-		m_pConnect->setClientOption("characterSetResults", "uft8");
-		
+		boost::scoped_ptr<sql::Statement> pst(m_pConnect->createStatement());
+		pst->execute("SET NAMES 'GBK'");
 
 	}
 	catch (sql::SQLException&e)
@@ -137,15 +137,13 @@ int CMysqlConn::Execute(string strSql)
 	}
 	try
 	{
-		if (!pst->execute(strSql.c_str()))
-		{
-			return ERROR_EXECUTE;
-		}
+		pst->execute(strSql.c_str());
 	}
 	catch (sql::SQLException&e)
 	{
 		CString str(e.getSQLStateCStr());
-		OutputDebugString(str);
+		CString strInfo(e.what());
+		OutputDebugString(str+strInfo);
 		return ERROR_EXECUTE;
 	}
 	catch (std::exception&e)

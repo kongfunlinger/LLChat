@@ -1,9 +1,11 @@
 #pragma once
 #include <mysql_connection.h>
+#include <mysql_driver.h>
 #include <cppconn/driver.h>
 #include <cppconn/resultset.h>
-#include <cppconn/statement.h>
 #include <cppconn/exception.h>
+#include <cppconn/prepared_statement.h>
+#include <cppconn/statement.h>
 enum DB_Error_Code
 {
 	ERROR_SUCESS = 0,

@@ -87,3 +87,31 @@ std::string CUtils::UTF8ToGBK(const string strUTF8)
 	delete[]wszGBK;
 	return strTemp;
 }
+
+std::string CUtils::UnicodeToAnsi(const wchar_t* wstr)
+{
+	int nlne = WideCharToMultiByte(CP_ACP, 0, wstr, -1, NULL, 0, NULL, NULL);
+	if (nlne == 0)
+	{
+		return NULL;
+	}
+	char* sztr = new char[nlne];
+	WideCharToMultiByte(CP_ACP, 0, wstr, -1, sztr, nlne, NULL, NULL);
+	string strOut = sztr;
+	delete[] sztr;
+	return strOut;
+}
+
+std::wstring CUtils::AnsiToUnicode(const char* cstr)
+{
+	int nLen = MultiByteToWideChar(CP_ACP, 0, cstr, -1, NULL, 0);
+	if (nLen == 0)
+	{
+		return NULL;
+	}
+	wchar_t* wcstr = new wchar_t[nLen];
+	MultiByteToWideChar(CP_ACP, 0, cstr, -1, wcstr, nLen);
+	wstring strOut = wcstr;
+	delete[] wcstr;
+	return strOut;
+}

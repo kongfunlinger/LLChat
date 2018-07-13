@@ -30,8 +30,13 @@ protected:
 	CGlassButton             m_btnAddDepartment;
 	CGlassButton             m_btnDeleteDepartment;
 
-	CLLMysqlOperate          m_mysqlOperate;
+	CImageList               m_ImageList;
+protected:
+	void                     RefreshTreeCtrl();
+	void                     InsertChildItem(HTREEITEM hParent, int nId);
 public:
 	virtual BOOL OnInitDialog();
 	afx_msg void OnBnClickedBtnAddDepatment();
+	afx_msg void OnTvnSelchangedTreeDepartment(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnBnClickedBtnDeleteDepatment();
 };

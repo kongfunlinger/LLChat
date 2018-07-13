@@ -2,6 +2,7 @@
 #include "LLMysqlOperate.h"
 #include "Utils.h"
 
+template<> CLLMysqlOperate* CSingleton<CLLMysqlOperate>::ms_Singleton = nullptr;
 CLLMysqlOperate::CLLMysqlOperate()
 {
 	int nError = InitDataBase("127.0.0.1", "root", "wangluling!012", "liaoliaodb");
@@ -40,6 +41,28 @@ vector<DepartmentInfo> CLLMysqlOperate::GetDepartmentVecByParentId(int nParentId
 	return vecDep;
 }
 
+DepartmentInfo CLLMysqlOperate::GetDepartmentInfoById(int nDepartId)
+{
+	DepartmentInfo info;
+	CString strSql;
+	strSql.Format(_T("SELECT * FROM tb_department WHERE departId=%d"), nDepartId);
+
+	sql::ResultSet* pRes = nullptr;
+	int nError = ExecuteQuery(CUtils::w2a(strSql.GetBuffer()), &pRes);
+	if (nError == ERROR_SUCESS)
+	{
+		while (pRes->next())
+		{
+			info.nDepartID = pRes->getInt("departId");
+			info.nParentId = pRes->getInt("parentId");
+			sql::SQLString strName = pRes->getString("departName");
+			info.strDepartName = strName.c_str();
+		}
+	}
+
+	return info;
+}
+
 int CLLMysqlOperate::InitDataBase(string strIP, string strName, string strPW, string strDbName)
 {
 	int nErrorCode = OpenCon(strIP, strName, strPW);
@@ -53,10 +76,9 @@ int CLLMysqlOperate::InitDataBase(string strIP, string strName, string strPW, st
 vector<AccountInfo> CLLMysqlOperate::GetAccountVecAllItem()
 {
 	vector<AccountInfo> vecAccount;
-	CString strSql;
-	strSql.Format(_T("SELECT * FROM tb_account"));
+	CStringA strSql = "SELECT * FROM tb_account";
 	sql::ResultSet* pRes = nullptr;
-	int nError = ExecuteQuery(CUtils::w2a(strSql.GetString()), &pRes);
+	int nError = ExecuteQuery(strSql.GetString(), &pRes);
 	if (nError == ERROR_SUCESS)
 	{
 		while (pRes->next())
@@ -64,28 +86,88 @@ vector<AccountInfo> CLLMysqlOperate::GetAccountVecAllItem()
 			AccountInfo accountInfo;
 			accountInfo.nAccountId = pRes->getInt("accountId");
 			sql::SQLString strName = pRes->getString("accountName");
-			accountInfo.strName = strName->c_str();
+			accountInfo.strName = strName.c_str();
 			sql::SQLString strPassWord = pRes->getString("accountPassWord");
-			accountInfo.strPassword = strPassWord->c_str();
+			accountInfo.strPassword = strPassWord.c_str();
 			sql::SQLString strSex = pRes->getString("Sex");
-			accountInfo.strSex = strSex->c_str();
+			accountInfo.strSex = strSex.c_str();
 			accountInfo.nAge = pRes->getInt("Age");
 			accountInfo.nDepartmentId = pRes->getInt("departmentId");
 			sql::SQLString strDepName = pRes->getString("departmentName");
-			accountInfo.strDepartmentName = strDepName->c_str();
+			accountInfo.strDepartmentName = strDepName.c_str();
 			sql::SQLString strHeadShip = pRes->getString("headerShip");
-			accountInfo.strHeaderShip = strHeadShip->c_str();
+			accountInfo.strHeaderShip = strHeadShip.c_str();
 			vecAccount.push_back(accountInfo);
 		}
 	}
 	return vecAccount;
 }
 
+vector<AccountInfo> CLLMysqlOperate::GetAccountVecByDepartId(int nDepartId)
+{
+	vector<AccountInfo> vecAccount;
+	CStringA strSql;
+	strSql.Format("SELECT * FROM tb_account WHERE departId=%d",nDepartId);
+	sql::ResultSet* pRes = nullptr;
+	int nError = ExecuteQuery(strSql.GetString(), &pRes);
+	if (nError == ERROR_SUCESS)
+	{
+		while (pRes->next())
+		{
+			AccountInfo accountInfo;
+			accountInfo.nAccountId = pRes->getInt("accountId");
+			sql::SQLString strName = pRes->getString("accountName");
+			accountInfo.strName = strName.c_str();
+			sql::SQLString strPassWord = pRes->getString("passWord");
+			accountInfo.strPassword = strPassWord.c_str();
+			sql::SQLString strSex = pRes->getString("sex");
+			accountInfo.strSex = strSex.c_str();
+			accountInfo.nAge = pRes->getInt("age");
+			accountInfo.nDepartmentId = pRes->getInt("departId");
+			sql::SQLString strDepName = pRes->getString("departName");
+			accountInfo.strDepartmentName = strDepName.c_str();
+			sql::SQLString strHeadShip = pRes->getString("headerShip");
+			accountInfo.strHeaderShip = strHeadShip.c_str();
+			vecAccount.push_back(accountInfo);
+		}
+	}
+	return vecAccount;
+}
+
+AccountInfo CLLMysqlOperate::GetAccountInfoById(int nAccountId)
+{
+	AccountInfo accountInfo;
+	CStringA strSql;
+	strSql.Format("SELECT * FROM tb_account WHERE accountId=%d", nAccountId);
+	sql::ResultSet* pRes = nullptr;
+	int nError = ExecuteQuery(strSql.GetString(), &pRes);
+	if (nError == ERROR_SUCESS)
+	{
+		while (pRes->next())
+		{
+			accountInfo.nAccountId = pRes->getInt("accountId");
+			sql::SQLString strName = pRes->getString("accountName");
+			accountInfo.strName = strName.c_str();
+			sql::SQLString strPassWord = pRes->getString("passWord");
+			accountInfo.strPassword = strPassWord.c_str();
+			sql::SQLString strSex = pRes->getString("sex");
+			accountInfo.strSex = strSex.c_str();
+			accountInfo.nAge = pRes->getInt("age");
+			accountInfo.nDepartmentId = pRes->getInt("departId");
+			sql::SQLString strDepName = pRes->getString("departName");
+			accountInfo.strDepartmentName = strDepName.c_str();
+			sql::SQLString strHeadShip = pRes->getString("headerShip");
+			accountInfo.strHeaderShip = strHeadShip.c_str();
+		}
+	}
+	return accountInfo;
+}
+
 int CLLMysqlOperate::InsertDepartmentInfo(DepartmentInfo info)
 {
 	int nErrorCode = ERROR_SUCESS;
 	CStringA strSql;
-	strSql.Format("INSERT INTO tb_department (departId,departName,parentId) VALUES (%d,'%s',%d)",info.nDepartID,CUtils::GBKToUTF8(info.strDepartName),info.nParentId);
+	strSql.Format("INSERT INTO tb_department (departId,departName,parentId) VALUES (%d,'%s',%d)",info.nDepartID,info.strDepartName.c_str(),info.nParentId);
 	nErrorCode = Execute(strSql.GetString());
 	return nErrorCode;
 }
@@ -93,20 +175,42 @@ int CLLMysqlOperate::InsertDepartmentInfo(DepartmentInfo info)
 int CLLMysqlOperate::InsertAccountInfo(AccountInfo info)
 {
 	int nErrorCode = ERROR_SUCESS;
+	CStringA strSql;
+	strSql.Format("INSERT INTO tb_account (accountId,accountName,passWord,sex,age,departId,departName,headerShip) VALUES (%d,'%s','%s','%s',%d,%d,'%s','%s')", 
+		info.nAccountId, info.strName.c_str(), info.strPassword.c_str(),info.strSex.c_str(),info.nAge,info.nDepartmentId,info.strDepartmentName.c_str(),info.strHeaderShip.c_str());
+	nErrorCode = Execute(strSql.GetString());
 	return nErrorCode;
 }
 
 int CLLMysqlOperate::DeleteDepartmentById(int nDepartId)
 {
 	int nErrorCode = ERROR_SUCESS;
-	CString strSql;
-	strSql.Format(_T("DELETE FROM tb_department WHERE departId=%d"), nDepartId);
-	nErrorCode = Execute(CUtils::w2a(strSql.GetString()));
+	CStringA strSql;
+	strSql.Format("DELETE FROM tb_department WHERE departId=%d", nDepartId);
+	nErrorCode = Execute(strSql.GetString());
 	return nErrorCode;
 }
+
+
+int CLLMysqlOperate::GetNewDepartId()
+{
+	int nId=0;
+	CStringA strSql = "SELECT MAX(departId) FROM tb_department";
+	sql::ResultSet* pRes = nullptr;
+	ExecuteQuery(strSql.GetString(),&pRes);
+	while (pRes->next())
+	{
+		nId = pRes->getInt("max(departId)");
+	}
+	return (nId+1);
+}
+
 
 int CLLMysqlOperate::DeleteAccountById(int nAccountId)
 {
 	int nErrorCode = ERROR_SUCESS;
+	CStringA strSql;
+	strSql.Format("DELETE FROM tb_account WHERE accountId=%d", nAccountId);
+	nErrorCode = Execute(strSql.GetString());
 	return nErrorCode;
 }

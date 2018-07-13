@@ -19,8 +19,8 @@
 //部门信息结构体
 struct DepartmentInfo
 {
-	int		nDepartID;
-	int		nParentId;
+	int		nDepartID = 0;
+	int		nParentId = 0;
 	string  strDepartName;
 };
 
@@ -32,7 +32,7 @@ struct AccountInfo
 	string  strName;
 	string  strPassword;
 	string  strSex;
-	int     nAge;
+	int     nAge = 0;
 	string  strDepartmentName;
 	string  strHeaderShip;
 

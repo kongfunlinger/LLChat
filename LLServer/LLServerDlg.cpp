@@ -106,10 +106,10 @@ BOOL CLLServerDlg::OnInitDialog()
 	// TODO: Add extra initialization here
 	
 	//获取本地IP
-	char chName[MAX_PATH] = { 0 };
-	gethostname(chName, MAX_PATH);
-	hostent *phost = gethostbyname(chName);
-	char *chIP = inet_ntoa(*(in_addr *)phost->h_addr_list[0]);
+	//char chName[MAX_PATH] = { 0 };
+	//gethostname(chName, MAX_PATH);
+	//hostent *phost = gethostbyname(chName);
+	//char *chIP = inet_ntoa(*(in_addr *)phost->h_addr_list[0]);
 
 	m_btnLog.SetImage(IDB_PNG_LOG);
 	m_btnLog.SetFillBK(FALSE);

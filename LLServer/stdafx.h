@@ -49,9 +49,10 @@
 #include <afxhtml.h>
 #include <atlbase.h>
 
-
+#include "io.h"
 #include <string>
 #include <vector>
+#include <iostream>
 using namespace std;
 
 #include "CommonHeader.h"

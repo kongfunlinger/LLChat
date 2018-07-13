@@ -87,11 +87,14 @@
     <ClInclude Include="DepartmentDlg.h">
       <Filter>Dialog</Filter>
     </ClInclude>
-    <ClInclude Include="..\commonclass\Singleton.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="LogModule.h">
+      <Filter>Commonclass</Filter>
+    </ClInclude>
+    <ClInclude Include="Singleton.h">
+      <Filter>Commonclass</Filter>
     </ClInclude>
     <ClInclude Include="LLMysqlOperate.h">
-      <Filter>Header Files</Filter>
+      <Filter>Mysql</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -134,8 +137,11 @@
     <ClCompile Include="OptionDlg.cpp">
       <Filter>Dialog</Filter>
     </ClCompile>
+    <ClCompile Include="LogModule.cpp">
+      <Filter>Commonclass</Filter>
+    </ClCompile>
     <ClCompile Include="LLMysqlOperate.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Mysql</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -162,6 +168,33 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="res\department.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\departmicon.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\departmicon.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\departmiconselect.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\accounticon.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\accounticonsel.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\female.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\femalesel.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\male.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\malesel.bmp">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

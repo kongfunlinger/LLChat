@@ -72,9 +72,12 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <LibraryPath>C:\Program Files %28x86%29\MySQL\Connector C++ 1.1\lib\opt;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Program Files %28x86%29\MySQL\Connector C++ 1.1\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -89,12 +92,12 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Program Files %28x86%29\MySQL\Connector.C++ 1.1\include;C:\Program Files\boost_1_67_0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files\boost_1_67_0;C:\Program Files\MySQL\Connector.C++ 1.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Program Files %28x86%29\MySQL\Connector.C++ 1.1\lib\opt;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Program Files\MySQL\Connector.C++ 1.1\lib\opt;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>mysqlcppconn.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Midl>
@@ -115,13 +118,13 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Program Files\MySQL\Connector.C++ 1.1\include;C:\Program Files\boost_1_67_0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files\boost_1_67_0;C:\Program Files\MySQL\Connector.C++ 1.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Program Files\MySQL\Connector.C++ 1.1\lib\opt;C:\Program Files\MySQL\MySQL Server 5.7\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>mysqlcppconn.lib;mysqlcppconn-static.lib;libmysql.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Program Files\MySQL\Connector.C++ 1.1\lib\opt;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>mysqlcppconn.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -194,7 +197,6 @@
     <ClInclude Include="..\commonclass\CDPI.h" />
     <ClInclude Include="..\commonclass\GDIPlusH.h" />
     <ClInclude Include="..\commonclass\GraphicsUtils.h" />
-    <ClInclude Include="..\commonclass\Singleton.h" />
     <ClInclude Include="..\Controls\GlassButton.h" />
     <ClInclude Include="..\Controls\ImgButton.h" />
     <ClInclude Include="..\Controls\ImgGlassButton.h" />
@@ -205,9 +207,11 @@
     <ClInclude Include="LLMysqlOperate.h" />
     <ClInclude Include="LLServer.h" />
     <ClInclude Include="LLServerDlg.h" />
+    <ClInclude Include="LogModule.h" />
     <ClInclude Include="MysqlConn.h" />
     <ClInclude Include="OptionDlg.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="Singleton.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Utils.h" />
@@ -223,6 +227,7 @@
     <ClCompile Include="LLMysqlOperate.cpp" />
     <ClCompile Include="LLServer.cpp" />
     <ClCompile Include="LLServerDlg.cpp" />
+    <ClCompile Include="LogModule.cpp" />
     <ClCompile Include="MysqlConn.cpp" />
     <ClCompile Include="OptionDlg.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -241,10 +246,19 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\account.png" />
+    <Image Include="res\accounticon.bmp" />
+    <Image Include="res\accounticonsel.bmp" />
     <Image Include="res\bitmap1.bmp" />
     <Image Include="res\department.png" />
+    <Image Include="res\departmicon.bmp" />
+    <Image Include="res\departmicon.png" />
+    <Image Include="res\departmiconselect.bmp" />
+    <Image Include="res\female.bmp" />
+    <Image Include="res\femalesel.bmp" />
     <Image Include="res\hmylogo.png" />
     <Image Include="res\LLServer.ico" />
+    <Image Include="res\male.bmp" />
+    <Image Include="res\malesel.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
