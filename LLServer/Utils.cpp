@@ -11,12 +11,12 @@ CUtils::~CUtils()
 {
 }
 
-std::wstring CUtils::GetAppPath()
+CString CUtils::GetAppPath()
 {
 	wchar_t chFullName[MAX_PATH] = { 0 };
 	GetModuleFileName(NULL, chFullName, MAX_PATH);
-	wstring strPath(chFullName);
-	strPath = strPath.substr(0,strPath.find_last_of(_T("\\")));
+	CString strPath(chFullName);
+	strPath = strPath.Left(strPath.ReverseFind('\\'));
 	return strPath;
 }
 
@@ -114,4 +114,26 @@ std::wstring CUtils::AnsiToUnicode(const char* cstr)
 	wstring strOut = wcstr;
 	delete[] wcstr;
 	return strOut;
+}
+
+SQLInfo CUtils::GetSqlInfo()
+{
+	SQLInfo info;
+	CString strPath = GetAppPath() + _T("\\LLServer.ini");
+	TCHAR szBuf[MAX_PATH];
+	GetPrivateProfileString(LLSERVERINI::SQLCONFIG, LLSERVERINI::SQLIP, _T("127.0.0.1"), szBuf, MAX_PATH, strPath);
+	info.strIp = szBuf;
+
+	GetPrivateProfileString(LLSERVERINI::SQLCONFIG, LLSERVERINI::SQLPORT, _T("3306"), szBuf, MAX_PATH, strPath);
+	info.strPort = szBuf;
+
+	GetPrivateProfileString(LLSERVERINI::SQLCONFIG, LLSERVERINI::SQLUSERNAME, _T("root"), szBuf, MAX_PATH, strPath);
+	info.strUserName = szBuf;
+
+	GetPrivateProfileString(LLSERVERINI::SQLCONFIG, LLSERVERINI::SQLUSERPASSWORD, _T("root"), szBuf, MAX_PATH, strPath);
+	info.strUserPassWord = szBuf;
+
+	GetPrivateProfileString(LLSERVERINI::SQLCONFIG, LLSERVERINI::SQLNAME, _T("liaoliaodb"), szBuf, MAX_PATH, strPath);
+	info.strSqlName = szBuf;
+	return info;
 }

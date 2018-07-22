@@ -5,7 +5,8 @@
 #include "stdafx.h"
 #include "LLClient.h"
 #include "LLClientDlg.h"
-
+#include "LoginDlg.h"
+#include "Utils.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -33,7 +34,7 @@ CLLClientApp::CLLClientApp()
 // The one and only CLLClientApp object
 
 CLLClientApp theApp;
-
+HANDLE hMutex;
 
 // CLLClientApp initialization
 
@@ -51,6 +52,9 @@ BOOL CLLClientApp::InitInstance()
 
 	CWinApp::InitInstance();
 
+	//GDI+初始化
+	Gdiplus::GdiplusStartupInput input;
+	GdiplusStartup(&m_GdiPlusToken, &input, NULL);
 
 	AfxEnableControlContainer();
 
@@ -68,15 +72,41 @@ BOOL CLLClientApp::InitInstance()
 	// Change the registry key under which our settings are stored
 	// TODO: You should modify this string to be something appropriate
 	// such as the name of your company or organization
-	SetRegistryKey(_T("Local AppWizard-Generated Applications"));
+	SetRegistryKey(_T("Liaoliao"));
 
-	CLLClientDlg dlg;
-	m_pMainWnd = &dlg;
-	INT_PTR nResponse = dlg.DoModal();
+	//initialize operations
+	hMutex = CreateMutex(NULL, FALSE, _T("Run"));
+	if (GetLastError() == ERROR_ALREADY_EXISTS) //有一个实例已经运行
+	{
+		return FALSE;
+	}
+
+	//初始化COM库
+	AfxOleInit();
+
+	//初始化SOCKET
+	AfxSocketInit();
+
+	INT_PTR nResponse = IDOK;
+	CString strPath = CUtils::GetAppPath() + _T("\\LLClient.ini");
+	if (1 == GetPrivateProfileInt(LLCLIENTINI::USERCONFIG, LLCLIENTINI::USERAUTOLOGIN, 0, strPath))
+	{
+		//直接登陆
+	}
+	else
+	{
+		CLoginDlg dlg;
+		nResponse = dlg.DoModal();
+	}
+
+
 	if (nResponse == IDOK)
 	{
 		// TODO: Place code here to handle when the dialog is
 		//  dismissed with OK
+		CLLClientDlg dlg;
+		m_pMainWnd = &dlg;
+		INT_PTR nResponse = dlg.DoModal();
 	}
 	else if (nResponse == IDCANCEL)
 	{
@@ -100,3 +130,16 @@ BOOL CLLClientApp::InitInstance()
 	return FALSE;
 }
 
+
+
+int CLLClientApp::ExitInstance()
+{
+	// TODO: Add your specialized code here and/or call the base class
+	//关闭GDI+
+	if (m_GdiPlusToken)
+	{
+		GdiplusShutdown(m_GdiPlusToken);
+		m_GdiPlusToken = NULL;
+	}
+	return CWinApp::ExitInstance();
+}

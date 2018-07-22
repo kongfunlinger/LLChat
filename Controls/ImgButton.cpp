@@ -43,6 +43,7 @@ void CImgButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
 {
 	CRect rectClient;
 	GetClientRect(rectClient);
+
 	CBufferMemDC memDC(CDC::FromHandle(lpDrawItemStruct->hDC), &rectClient, m_clrBKGrnd, m_bIsFillBK);
 	
 	Graphics g(memDC);

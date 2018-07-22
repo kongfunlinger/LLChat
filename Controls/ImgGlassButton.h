@@ -6,7 +6,8 @@ enum BUTTON_TYPE
 	BUTTON_TYPE_CUSTOM = 0,
 	BUTTON_TYPE_ACTION,
 	BUTTON_TYPE_NON_DISTRACTION,
-	BUTTON_TYPE_NEW_NON_DISTRACTION
+	BUTTON_TYPE_NEW_NON_DISTRACTION,
+	BUTTON_TYPE_NORMAL
 };
 
 class CImgGlassButton :
@@ -29,7 +30,7 @@ public:
 	void SetFontSize(REAL size);
 	void SetFocusToParent( BOOL bSetFocus );
 	void SetFontStyle( FontStyle nFontStyle );
-	
+	void SetBkColor(COLORREF clrBk){ m_clrFill = clrBk; }
 private:
 	BUTTON_TYPE m_nBtnType;
 	BOOL m_bOverControl;

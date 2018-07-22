@@ -1,9 +1,10 @@
 #pragma once
 
 #include "../Controls/ImgGlassButton.h"
+#include "../Controls/Base_Dlg.h"
 // COptionDlg dialog
 
-class COptionDlg : public CDialogEx
+class COptionDlg : public CBase_Dlg
 {
 	DECLARE_DYNAMIC(COptionDlg)
 
@@ -27,4 +28,5 @@ public:
 	afx_msg void OnPaint();
 	afx_msg void OnBnClickedBtnDepartment();
 	afx_msg void OnBnClickedBtnAccount();
+	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 };

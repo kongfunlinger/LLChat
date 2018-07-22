@@ -10,7 +10,7 @@ class CGlassButton : public CButton
 public:
 	CGlassButton();
 	virtual ~CGlassButton();
-	void SetButtonColor(Color clrDark,Color clrUpline,Color clrDownline) { m_clrButton = clrDark;m_clrUpline=clrUpline;m_clrDownline = clrDownline;};
+	void SetButtonColor(COLORREF clr) { m_clrButton = clr;};
 	void SetImageName(CString strName);
 	void SetBKColor(COLORREF clr){ m_clrBKGrnd = clr; };
 
@@ -19,7 +19,9 @@ public:
 		BUTTON_TYPE_ACTION,				// action button, used for prompting users to take actions: Green
 		BUTTON_TYPE_ACTION_EX,				// action button, used for prompting users to take actions: Green
 		BUTTON_TYPE_NON_DISTRACTION,		// non-distraction button, which we don't want user to click usually: Grey
-		 BUTTON_TYPE_DEFINE_COLOR_SELF// use this type after call SetButtonColor()
+		BUTTON_TYPE_RECT,
+		BUTTON_TYPE_SQURE,
+		BUTTON_TYPE_NON_SQURE,//action button,but the shape is rectangle
 	} GlassButtonType;
 
 protected:
@@ -29,6 +31,7 @@ protected:
 	void DrawGlassButton(Graphics* g);
 	// owner of the button should call these functions to initialize button
 public:
+	void SetButtonShape(BOOL IsRectangle);
 	void SetButtonType (UINT btnType = BUTTON_TYPE_NORMAL);	// set the type of button
 	//void InitializeButton ();	// make initialization of the button settings, especially its size
 	void SetButtonAutoSize(BOOL bIsAutoSize = TRUE);
@@ -49,11 +52,9 @@ private:
 	BOOL m_bIsSplitPressed;
 	BOOL m_bIsDisabled;
 	BOOL m_bIsInitSize;		// if the button window size has been calculated and initialized
-	Color m_clrButton;
-	Color m_clrUpline;
-	Color m_clrDownline;
+	COLORREF m_clrButton;
 	COLORREF m_clrBKGrnd;
-
+    BOOL m_bIsRectangle;
 	BOOL m_bUseImage;
 	Image* m_pImage;
 	Font* m_pFont;

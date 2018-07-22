@@ -4,13 +4,14 @@
 #include "stdafx.h"
 #include "GlassButton.h"
 #include "../commonclass/BufferMemDC.h"
-
+#include "../commonclass/GraphicsUtils.h"
 // CGlassButton
 
 IMPLEMENT_DYNAMIC(CGlassButton, CButton)
 
 CGlassButton::CGlassButton()
 {
+	m_clrButton = COLOR_DLG_BUTTON_NORMAL_ENABLED;
 	m_bUseImage = FALSE;
 	m_pImage = NULL;
 	m_bOverControl = FALSE;
@@ -24,9 +25,7 @@ CGlassButton::CGlassButton()
 	m_bIsSplitBtn = FALSE;
 	m_bIsPressed = FALSE;
 	m_bIsSplitPressed = FALSE;
-	m_clrButton = CLRA2ARGB(COLOR_DLG_BUTTON_NORMAL_ENABLED, 0xff000000);
-	m_clrUpline = CLRA2ARGB(COLOR_DLG_BUTTON_OUTLINE, 0xff000000);
-	m_clrDownline = CLRA2ARGB(COLOR_DLG_BUTTON_NORMAL_DOWNLINE,0xff000000);
+	m_bIsRectangle = FALSE;
 }
 
 CGlassButton::~CGlassButton()
@@ -69,10 +68,6 @@ void CGlassButton::SetButtonType(UINT	uiButtonType)
 void CGlassButton::DrawItem(LPDRAWITEMSTRUCT lpDIS)
 {
 	CDC*	pDC = CDC::FromHandle(lpDIS->hDC);
-	if (pDC==nullptr)
-	{
-		return;
-	}
 	CRect rectClient;
 	GetClientRect(rectClient);
 	/*m_hRgn = CreateRoundRectRgn(rectClient.left,rectClient.top,rectClient.right,rectClient.bottom,20,20);
@@ -116,6 +111,30 @@ void CGlassButton::DrawItem(LPDRAWITEMSTRUCT lpDIS)
 			fontColor		= DLG_BUTTON_NON_DISTRACTION_FONT_COLOR;
 		}
 		break;
+	case BUTTON_TYPE_RECT:
+		{
+			fontFamilyName	= DLG_BUTTON_ACTION_FONT_NAME;
+			fontSize		= DLG_BUTTON_ACTION_FONT_SIZE;
+			fontStytle		= DLG_BUTTON_ACTION_FONT_STYTLE;
+			fontColor		= DLG_BUTTON_ACTION_FONT_COLOR;
+		}
+	     break;
+	case BUTTON_TYPE_SQURE:
+	{
+		fontFamilyName = DLG_BUTTON_ACTION_FONT_NAME;
+		fontSize = 12.0;
+		fontStytle = DLG_BUTTON_ACTION_FONT_STYTLE;
+		fontColor = DLG_BUTTON_ACTION_FONT_COLOR;
+	}
+	break;
+	case BUTTON_TYPE_NON_SQURE:
+	{
+		fontFamilyName = DLG_BUTTON_ACTION_FONT_NAME;
+		fontSize = 12.0;
+		fontStytle = DLG_BUTTON_ACTION_FONT_STYTLE;
+		fontColor = DLG_BUTTON_ACTION_FONT_COLOR;
+	}
+	break;
 	default:
 		{
 			fontFamilyName	= DLG_BUTTON_NORMAL_FONT_NAME;
@@ -139,8 +158,8 @@ void CGlassButton::DrawItem(LPDRAWITEMSTRUCT lpDIS)
 		RectF	newTextRect;
 		GetClientRect(rectClientOld);
 		//Get the bounding rect of based on the font used.
-		Font	fontBtnText(fontFamilyName.AllocSysString(), fontSize, fontStytle);
-		g.MeasureString(strBtnText.AllocSysString(), strBtnText.GetLength(), &fontBtnText, oldClientRect, &newTextRect);
+		Font	fontBtnText(fontFamilyName, fontSize, fontStytle);
+		g.MeasureString(strBtnText, strBtnText.GetLength(), &fontBtnText, oldClientRect, &newTextRect);
 
 		// now set the button boundary rect (in client rect)
 		rectNewBtnBoundary.SetRect(0, 0, (int)newTextRect.Width+2*(int)newTextRect.Height, (int)newTextRect.Height*2+5);
@@ -243,7 +262,6 @@ void CGlassButton::OnMouseLeave()
 	if (m_bIsTrackingMouse)
 	{
 		m_bIsTrackingMouse = FALSE;
-	
 		/*
 		// ask the parent window to paint so that
 		// this button, which has transparent background
@@ -274,7 +292,6 @@ void CGlassButton::OnMouseMove(UINT /*nFlags*/, CPoint /*point*/)
 		{
 			m_bIsTrackingMouse = TRUE;
 		}
-	
 	}
 
 	if(m_bIsSplitBtn)
@@ -444,6 +461,10 @@ void CGlassButton::DrawGlassButton(Graphics* g)
 	CRect rectMiddle(crtClient);
 
 	REAL radius =(REAL)rectMiddle.Height();
+	if (m_bIsRectangle)
+	{
+		radius = 0.0f;
+	}
 	if (m_bIsPressed)
 	{
 //		rectMiddle.OffsetRect(1,1);
@@ -461,6 +482,14 @@ void CGlassButton::DrawGlassButton(Graphics* g)
 		colorOutline = CLRA2ARGB(COLOR_DLG_BUTTON_OUTLINE, 0xff000000);
 		colorUpLine = CLRA2ARGB(COLOR_DLG_BUTTON_ACTION_UPLINE,0xff000000);
 		colorDownLine = CLRA2ARGB(COLOR_DLG_BUTTON_ACTION_DOWNLINE,0xff000000);
+		break;
+	case BUTTON_TYPE_RECT:
+		colorDark = CLRA2ARGB(COLOR_DLG_BUTTON_ACTION_ENABLED, 0xff000000);
+		colorLight = CLRA2ARGB(COLOR_DLG_BUTTON_ACTION_ENABLED_LIGHT, 0xff000000);
+		colorOutline = CLRA2ARGB(COLOR_DLG_BUTTON_OUTLINE, 0xff000000);
+		colorUpLine = CLRA2ARGB(COLOR_DLG_BUTTON_ACTION_UPLINE,0xff000000);
+		colorDownLine = CLRA2ARGB(COLOR_DLG_BUTTON_ACTION_DOWNLINE,0xff000000);
+		radius = 0.0f;
 		break;
 	case BUTTON_TYPE_ACTION_EX:
 		colorDark = CLRA2ARGB(COLOR_DLG_BUTTON_ACTION_ENABLED, 0xff000000);
@@ -483,14 +512,23 @@ void CGlassButton::DrawGlassButton(Graphics* g)
 		colorUpLine = CLRA2ARGB(COLOR_DLG_BUTTON_NORMAL_UPLINE,0xff000000);
 		colorDownLine = CLRA2ARGB(COLOR_DLG_BUTTON_NORMAL_DOWNLINE,0xff000000);
 		break;
-	case  BUTTON_TYPE_DEFINE_COLOR_SELF:
-		colorDark =m_clrButton;
-		colorLight = CLRA2ARGB(COLOR_DLG_BUTTON_NORMAL_ENABLED_LIGHT, 0xff000000);
-		colorOutline = CLRA2ARGB(COLOR_DLG_BUTTON_OUTLINE, 0xff000000);
-		colorUpLine = m_clrUpline;
-		colorDownLine = m_clrDownline;
+	case BUTTON_TYPE_SQURE:
+		colorDark = CLRA2ARGB(RGB(0, 128, 255), 0xff000000);
+		colorLight = CLRA2ARGB(RGB(0, 105, 210), 0xff000000);
+		colorOutline = CLRA2ARGB(RGB(0, 105, 210), 0xff000000);
+		colorUpLine = CLRA2ARGB(RGB(0, 105, 210), 0xff000000);
+		colorDownLine = CLRA2ARGB(RGB(0, 105, 210), 0xff000000);
+		radius = 0.0f;
+		break;
+	case BUTTON_TYPE_NON_SQURE:
+		colorDark = CLRA2ARGB(RGB(102, 102, 102), 0xff000000);
+		colorLight = CLRA2ARGB(RGB(102, 102, 102), 0xff000000);
+		colorOutline = CLRA2ARGB(RGB(102, 102, 102), 0xff000000);
+		colorUpLine = CLRA2ARGB(RGB(102, 102, 102), 0xff000000);
+		colorDownLine = CLRA2ARGB(RGB(102, 102, 102), 0xff000000);
 		break;
 	}
+
 	if(m_bIsPressed || m_bIsSplitPressed)
 	{
 		Color clrTemp;
@@ -498,26 +536,40 @@ void CGlassButton::DrawGlassButton(Graphics* g)
 		colorDownLine = colorUpLine;
 		colorUpLine = clrTemp;
 	}
+
 	RectF rectFMiddle((REAL)rectMiddle.left, (REAL)rectMiddle.top, (REAL)rectMiddle.Width(), (REAL)rectMiddle.Height());
 	SolidBrush BrushCenter(colorDark);
-	FillSolidRect(g, rectMiddle, radius, &BrushCenter, CORNERS_ALL );
-
+	if (m_bIsRectangle)
+	{
+		FillSolidRect(g, rectMiddle, radius, &BrushCenter, NULL );
+	} 
+	else
+	{
+			FillSolidRect(g, rectMiddle, radius, &BrushCenter, CORNERS_ALL );
+	}
 	GraphicsPath gp;
-	Pen pen(colorOutline, 1.5f);
-	_CreateRectPath(&gp, rectMiddle, radius, CORNERS_ALL);
+	Pen pen(colorOutline, 0.1f);
+	if (m_bIsRectangle)
+	{
+           _CreateRectPath(&gp, rectMiddle, radius, NULL);
+	} 
+	else
+	{
+			_CreateRectPath(&gp, rectMiddle, radius, CORNERS_ALL);
+	}
 	g->DrawPath(&pen, &gp);
 
 	for(INT i=0;i<2;i++)
 	{
 		rectMiddle.DeflateRect(1,1);
-		rectFMiddle.X += 1.0f;
-		rectFMiddle.Y += 1.0f;
-		rectFMiddle.Width -= 2.0f;
-		rectFMiddle.Height -= 2.0f;
-		radius -= 2.0f;
+		rectFMiddle.X += 0.0f;
+		rectFMiddle.Y += 0.0f;
+		rectFMiddle.Width -= 0.0f;
+		rectFMiddle.Height -= 0.0f;
+		radius -= 0.1f;
 
-		Pen penUp(colorUpLine, 1.5f);
-		Pen penDown(colorDownLine, 1.5f);
+		Pen penUp(colorUpLine, 0.1f);
+		Pen penDown(colorDownLine, 0.1f);
 
 		RectF rWork;
 		rWork.Width		= radius;
@@ -527,45 +579,117 @@ void CGlassButton::DrawGlassButton(Graphics* g)
 		rWork.Y			= rectFMiddle.Y;
 		if(m_bIsSplitBtn && m_bIsSplitPressed)
 		{
-			g->DrawArc(&penDown,rWork,180.0f,90.0f);
-			g->DrawArc(&penUp,rWork,90.0f,90.0f);
+			if (m_bIsRectangle)
+			{
+				
+			} 
+			else
+			{
+				g->DrawArc(&penUp,rWork,180.0f,90.0f);
+				g->DrawArc(&penDown,rWork,90.0f,90.0f);
+			}
+			
 		}
 		else
 		{
-			g->DrawArc(&penUp,rWork,180.0f,90.0f);
-			g->DrawArc(&penDown,rWork,90.0f,90.0f);
+
+			if (m_bIsRectangle)
+			{
+			} 
+			else
+			{
+				g->DrawArc(&penUp,rWork,180.0f,90.0f);
+				g->DrawArc(&penDown,rWork,90.0f,90.0f);
+			}
 		}
 
 		rWork.X			= rectFMiddle.X + (rectFMiddle.Width - radius);
 		if(m_bIsSplitBtn && m_bIsPressed)
 		{
-			g->DrawArc(&penDown,rWork,270.0f,90.0f);
-			g->DrawArc(&penUp,rWork,0.0f,90.0f);
+			if (m_bIsRectangle)
+			{
+				g->DrawLine(&penUp,rectFMiddle.X,rectFMiddle.Y,rectFMiddle.X + rectFMiddle.Width,rectFMiddle.Y);
+				g->DrawLine(&penUp,rectFMiddle.X,rectFMiddle.Y ,rectFMiddle.X ,rectFMiddle.Y + rectFMiddle.Height);
+				g->DrawLine(&penDown,rectFMiddle.X,rectFMiddle.Y + rectFMiddle.Height,rectFMiddle.X + rectFMiddle.Width,rectFMiddle.Y + rectFMiddle.Height);
+				g->DrawLine(&penDown,rectFMiddle.X + rectFMiddle.Width,rectFMiddle.Y ,rectFMiddle.X + rectFMiddle.Width ,rectFMiddle.Y + rectFMiddle.Height);
+			} 
+			else
+			{
+				g->DrawArc(&penDown,rWork,270.0f,90.0f);
+				g->DrawArc(&penUp,rWork,0.0f,90.0f);
+			}
+			
 		}
 		else
 		{
-			g->DrawArc(&penUp,rWork,270.0f,90.0f);
-			g->DrawArc(&penDown,rWork,0.0f,90.0f);
+			if (m_bIsRectangle)
+			{
+				g->DrawLine(&penUp,rectFMiddle.X,rectFMiddle.Y,rectFMiddle.X + rectFMiddle.Width,rectFMiddle.Y);
+				g->DrawLine(&penUp,rectFMiddle.X,rectFMiddle.Y ,rectFMiddle.X ,rectFMiddle.Y + rectFMiddle.Height);
+				g->DrawLine(&penDown,rectFMiddle.X,rectFMiddle.Y + rectFMiddle.Height,rectFMiddle.X + rectFMiddle.Width,rectFMiddle.Y + rectFMiddle.Height);
+				g->DrawLine(&penDown,rectFMiddle.X + rectFMiddle.Width,rectFMiddle.Y ,rectFMiddle.X + rectFMiddle.Width ,rectFMiddle.Y + rectFMiddle.Height);
+			} 
+			else
+			{
+				g->DrawArc(&penUp,rWork,270.0f,90.0f);
+				g->DrawArc(&penDown,rWork,0.0f,90.0f);
+			}
+			
 		}
 		if(m_bIsSplitBtn && m_bIsPressed)
 		{
-			g->DrawLine(&penUp,rectFMiddle.X + (radius/2),rectFMiddle.Y,rWork.X + (radius/2),rWork.Y);
-			g->DrawLine(&penDown,rectFMiddle.X + (radius/2),rectFMiddle.Y+ radius,rWork.X + (radius/2),rWork.Y + radius);
-			g->DrawLine(&penDown,rectFMiddle.X + rectFMiddle.Width - rectFMiddle.Height + 1,rectFMiddle.Y,rWork.X + (radius/2),rWork.Y);
-			g->DrawLine(&penUp,rectFMiddle.X + rectFMiddle.Width - rectFMiddle.Height + 1,rectFMiddle.Y+ radius,rWork.X +(radius/2),rWork.Y + radius);
+			if (m_bIsRectangle)
+			{
+				g->DrawLine(&penUp,rectFMiddle.X,rectFMiddle.Y,rectFMiddle.X + rectFMiddle.Width,rectFMiddle.Y);
+				g->DrawLine(&penUp,rectFMiddle.X,rectFMiddle.Y ,rectFMiddle.X ,rectFMiddle.Y + rectFMiddle.Height);
+				g->DrawLine(&penDown,rectFMiddle.X,rectFMiddle.Y + rectFMiddle.Height,rectFMiddle.X + rectFMiddle.Width,rectFMiddle.Y + rectFMiddle.Height);
+				g->DrawLine(&penDown,rectFMiddle.X + rectFMiddle.Width,rectFMiddle.Y ,rectFMiddle.X + rectFMiddle.Width ,rectFMiddle.Y + rectFMiddle.Height);
+			} 
+			else
+			{
+				g->DrawLine(&penUp,rectFMiddle.X + (radius/2),rectFMiddle.Y,rWork.X + (radius/2),rWork.Y);
+				g->DrawLine(&penDown,rectFMiddle.X + (radius/2),rectFMiddle.Y+ radius,rWork.X + (radius/2),rWork.Y + radius);
+				g->DrawLine(&penDown,rectFMiddle.X + rectFMiddle.Width - rectFMiddle.Height + 1,rectFMiddle.Y,rWork.X + (radius/2),rWork.Y);
+				g->DrawLine(&penUp,rectFMiddle.X + rectFMiddle.Width - rectFMiddle.Height + 1,rectFMiddle.Y+ radius,rWork.X +(radius/2),rWork.Y + radius);
+			}
+			
 
 		}
 		else if(m_bIsSplitBtn && m_bIsSplitPressed)
 		{
-			g->DrawLine(&penDown,rectFMiddle.X + (radius/2),rectFMiddle.Y,rWork.X + (radius/2),rWork.Y);
-			g->DrawLine(&penUp,rectFMiddle.X + (radius/2),rectFMiddle.Y+ radius,rWork.X + (radius/2),rWork.Y + radius);
-			g->DrawLine(&penUp,rectFMiddle.X + rectFMiddle.Width - rectFMiddle.Height + 1,rectFMiddle.Y,rWork.X + (radius/2),rWork.Y);
-			g->DrawLine(&penDown,rectFMiddle.X + rectFMiddle.Width - rectFMiddle.Height + 1,rectFMiddle.Y+ radius,rWork.X +(radius/2),rWork.Y + radius);
+			if (m_bIsRectangle)
+			{
+				g->DrawLine(&penUp,rectFMiddle.X,rectFMiddle.Y,rectFMiddle.X + rectFMiddle.Width,rectFMiddle.Y);
+				g->DrawLine(&penUp,rectFMiddle.X,rectFMiddle.Y ,rectFMiddle.X ,rectFMiddle.Y + rectFMiddle.Height);
+				g->DrawLine(&penDown,rectFMiddle.X,rectFMiddle.Y + rectFMiddle.Height,rectFMiddle.X + rectFMiddle.Width,rectFMiddle.Y + rectFMiddle.Height);
+				g->DrawLine(&penDown,rectFMiddle.X + rectFMiddle.Width,rectFMiddle.Y ,rectFMiddle.X + rectFMiddle.Width ,rectFMiddle.Y + rectFMiddle.Height);
+			} 
+			else
+			{
+				g->DrawLine(&penDown,rectFMiddle.X + (radius/2),rectFMiddle.Y,rWork.X + (radius/2),rWork.Y);
+				g->DrawLine(&penUp,rectFMiddle.X + (radius/2),rectFMiddle.Y+ radius,rWork.X + (radius/2),rWork.Y + radius);
+				g->DrawLine(&penUp,rectFMiddle.X + rectFMiddle.Width - rectFMiddle.Height + 1,rectFMiddle.Y,rWork.X + (radius/2),rWork.Y);
+				g->DrawLine(&penDown,rectFMiddle.X + rectFMiddle.Width - rectFMiddle.Height + 1,rectFMiddle.Y+ radius,rWork.X +(radius/2),rWork.Y + radius);
+			}
+		
 		}
 		else
 		{
-			g->DrawLine(&penUp,rectFMiddle.X + (radius/2),rectFMiddle.Y,rWork.X + (radius/2),rWork.Y);
-			g->DrawLine(&penDown,rectFMiddle.X + (radius/2),rectFMiddle.Y+ radius,rWork.X +(radius/2),rWork.Y + radius);
+			if (m_bIsRectangle)
+			{
+				g->DrawLine(&penUp,rectFMiddle.X,rectFMiddle.Y,rectFMiddle.X + rectFMiddle.Width,rectFMiddle.Y);
+				g->DrawLine(&penUp,rectFMiddle.X,rectFMiddle.Y ,rectFMiddle.X ,rectFMiddle.Y + rectFMiddle.Height);
+				g->DrawLine(&penDown,rectFMiddle.X,rectFMiddle.Y + rectFMiddle.Height,rectFMiddle.X + rectFMiddle.Width,rectFMiddle.Y + rectFMiddle.Height);
+				g->DrawLine(&penDown,rectFMiddle.X + rectFMiddle.Width,rectFMiddle.Y ,rectFMiddle.X + rectFMiddle.Width ,rectFMiddle.Y + rectFMiddle.Height);
+
+
+			} 
+			else
+			{
+				g->DrawLine(&penUp,rectFMiddle.X + (radius/2),rectFMiddle.Y,rWork.X + (radius/2),rWork.Y);
+				g->DrawLine(&penDown,rectFMiddle.X + (radius/2),rectFMiddle.Y+ radius,rWork.X +(radius/2),rWork.Y + radius);
+			}
+			
 		}
 
 	}
@@ -621,4 +745,9 @@ void CGlassButton::SetSplitBtn( BOOL bIsSplit,UINT unMsg)
 {
 	m_bIsSplitBtn = bIsSplit;
 	m_unMsgSplit = unMsg;
+}
+
+void CGlassButton::SetButtonShape( BOOL IsRectangle )
+{
+     m_bIsRectangle = IsRectangle;
 }

@@ -7,6 +7,7 @@
 #include "LLServerDlg.h"
 #include "LLMysqlOperate.h"
 #include "LogModule.h"
+#include "XMLOperate.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -85,7 +86,7 @@ BOOL CLLServerApp::InitInstance()
 	//创建单实例
 	CLogModule*           pLog = new CLogModule();
 	CLLMysqlOperate*      pSqlOperate = new CLLMysqlOperate();
-
+	CXMLOperate*          pXmlOperate = new CXMLOperate();
 
 	//initialize operations
 	hMutex = CreateMutex(NULL, FALSE, _T("Run"));
@@ -153,6 +154,11 @@ int CLLServerApp::ExitInstance()
 	{
 		CLLMysqlOperate* pSqlOpe = CLLMysqlOperate::getSingletonPtr();
 		SAFE_DELETE(pSqlOpe);
+	}
+	if (CXMLOperate::getSingletonPtr())
+	{
+		CXMLOperate* pXmlOpe = CXMLOperate::getSingletonPtr();
+		SAFE_DELETE(pXmlOpe);
 	}
 
 	return CWinApp::ExitInstance();

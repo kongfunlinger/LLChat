@@ -65,7 +65,14 @@ void CImgGlassButton::DrawItem(LPDRAWITEMSTRUCT lpDIS)
 	CDC*	pDC = CDC::FromHandle(lpDIS->hDC);
 	CRect rectClient;
 	GetClientRect(rectClient);
-	CBufferMemDC memDC(pDC, &rectClient, RGB(255,0,0), FALSE);	
+
+	BOOL bFill = FALSE;
+	if (m_nBtnType == BUTTON_TYPE_NORMAL)
+	{
+		bFill = TRUE;
+	}
+	CBufferMemDC memDC(pDC, &rectClient, m_clrFill, bFill);	
+
 	Graphics g(memDC);
 
 	// Getthe right button font attributes
@@ -86,10 +93,22 @@ void CImgGlassButton::DrawItem(LPDRAWITEMSTRUCT lpDIS)
 	RectF imageRect;
 	if(m_pImage)
 	{
-		imageRect.Y = (REAL)(rectImage.Height()/2) - g_dpi.ScaleY(m_pImage->GetHeight()/2 - 3);
-		imageRect.X = (REAL)m_nLeftSpaceIcon;
-		imageRect.Width = (REAL)g_dpi.ScaleX(m_pImage->GetWidth());
-		imageRect.Height = (REAL)g_dpi.ScaleY(m_pImage->GetHeight());
+		if (m_nBtnType == BUTTON_TYPE_NORMAL)
+		{
+			imageRect.Y = (REAL)rect.top -3;
+			imageRect.X = (REAL)rect.left;
+			imageRect.Width = (REAL)g_dpi.ScaleX(m_pImage->GetWidth());
+			imageRect.Height = (REAL)g_dpi.ScaleY(m_pImage->GetHeight());
+		}
+		else
+		{
+
+
+			imageRect.Y = (REAL)(rectImage.Height() / 2) - g_dpi.ScaleY(m_pImage->GetHeight() / 2 - 3);
+			imageRect.X = (REAL)m_nLeftSpaceIcon;
+			imageRect.Width = (REAL)g_dpi.ScaleX(m_pImage->GetWidth());
+			imageRect.Height = (REAL)g_dpi.ScaleY(m_pImage->GetHeight());
+		}
 	}
 
 	DrawImgGlassButton(&g);
@@ -102,6 +121,7 @@ void CImgGlassButton::DrawItem(LPDRAWITEMSTRUCT lpDIS)
 		rect.left += INT(40);
 		rect.top = INT(imageRect.Y + imageRect.Height + m_nBottomSpaceText);
 		rect.bottom = rect.top + INT(40);
+	
 	}
 	if (bIsSelected)
 	{
@@ -128,10 +148,16 @@ void CImgGlassButton::DrawItem(LPDRAWITEMSTRUCT lpDIS)
 	{
 		clrFont = RGB(51, 51, 51);
 	}
-	DrawText(&g, rect, strText, fontFamilyName, m_fFontSize, m_nFontStyle, clrFont, m_pImage ? StringAlignmentNear : StringAlignmentCenter, StringAlignmentCenter, 0, 0);
-	
+	if (m_nBtnType != BUTTON_TYPE_NORMAL)
+	{
+
+
+		DrawText(&g, rect, strText, fontFamilyName, m_fFontSize, m_nFontStyle, clrFont, m_pImage ? StringAlignmentNear : StringAlignmentCenter, StringAlignmentCenter, 0, 0);
+	}
+
 	if (m_pImage)
 	{
+		
 //		g.DrawImage(m_pImage, (int)(rectImage.Height()/4), (int)(rectImage.Height()/2) - (m_pImage->GetHeight()/2), m_pImage->GetWidth(), m_pImage->GetHeight() );
 		g.DrawImage(m_pImage, imageRect);
 	}
@@ -181,8 +207,16 @@ void CImgGlassButton::DrawImgGlassButton(Graphics* g)
 	GraphicsPath gp;
 	Pen pen(corOutLine, 1.5f);
 	_CreateRectPath(&gp, rectMiddle, radius, CORNERS_ALL);
-	DrawGradientBackground( &gp, crtClient, corTop, corBottom, g, radius, CORNERS_ALL);
-	//g->DrawPath(&pen, &gp);
+	if (m_nBtnType == BUTTON_TYPE_CUSTOM)
+	{
+		DrawGradientBackground(&gp, crtClient, corTop, corBottom, g, radius, CORNERS_ALL);
+	}
+	else if (m_nBtnType != BUTTON_TYPE_NORMAL)
+	{
+		g->DrawPath(&pen, &gp);
+	}
+	
+
 }
 
 void CImgGlassButton::OnMouseMove(UINT /*nFlags*/, CPoint /*point*/)

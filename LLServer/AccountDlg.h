@@ -1,10 +1,10 @@
 #pragma once
 #include "..//Controls///StaticText.h"
 #include "..//Controls//GlassButton.h"
-
+#include "../Controls/Base_Dlg.h"
 // CAccountDlg dialog
 
-class CAccountDlg : public CDialogEx
+class CAccountDlg : public CBase_Dlg
 {
 	DECLARE_DYNAMIC(CAccountDlg)
 
@@ -31,8 +31,7 @@ protected:
 	CEdit				m_editAccountPw;
 	CStaticText         m_staAccountSex;
 	CComboBox			m_combAccountSex;
-	CStaticText         m_staAccountDep;
-	CEdit				m_editAccountDep;
+
 	CStaticText         m_staAccountHs;
 	CEdit				m_editAccountHs;
 	CStaticText			m_staCurAccount;
@@ -40,6 +39,7 @@ protected:
 	CEdit				m_editCurAccountId;
 	CStaticText			m_staCurDepartId;
 	CEdit				m_editCurDepartId;
+	CEdit				m_editCurDepartName;
 
 
 
@@ -56,4 +56,5 @@ public:
 	afx_msg void OnBnClickedButtonAddAccount();
 	afx_msg void OnBnClickedButtonDeleteAccount();
 	afx_msg void OnTvnSelchangedTreeAccount(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 };

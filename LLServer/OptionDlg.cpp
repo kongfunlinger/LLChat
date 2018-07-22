@@ -12,7 +12,7 @@
 IMPLEMENT_DYNAMIC(COptionDlg, CDialogEx)
 
 COptionDlg::COptionDlg(CWnd* pParent /*=NULL*/)
-	: CDialogEx(COptionDlg::IDD, pParent)
+: CBase_Dlg(COptionDlg::IDD, pParent)
 {
 
 }
@@ -29,10 +29,11 @@ void COptionDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 
-BEGIN_MESSAGE_MAP(COptionDlg, CDialogEx)
+BEGIN_MESSAGE_MAP(COptionDlg, CBase_Dlg)
 	ON_WM_PAINT()
 	ON_BN_CLICKED(IDC_BTN_DEPARTMENT, &COptionDlg::OnBnClickedBtnDepartment)
 	ON_BN_CLICKED(IDC_BTN_ACCOUNT, &COptionDlg::OnBnClickedBtnAccount)
+	ON_WM_CTLCOLOR()
 END_MESSAGE_MAP()
 
 
@@ -79,4 +80,15 @@ void COptionDlg::OnBnClickedBtnAccount()
 {
 	// TODO: Add your control notification handler code here
 	::SendMessage(GetParent()->m_hWnd, MSG_CHILD2FATHER_ACCOUNT, NULL, NULL);
+}
+
+
+HBRUSH COptionDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
+{
+	HBRUSH hbr = __super::OnCtlColor(pDC, pWnd, nCtlColor);
+
+	// TODO:  Change any attributes of the DC here
+
+	// TODO:  Return a different brush if the default is not desired
+	return hbr;
 }

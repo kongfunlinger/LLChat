@@ -5,4 +5,5 @@
 
 #include "stdafx.h"
 
+CDPI g_dpi;
 

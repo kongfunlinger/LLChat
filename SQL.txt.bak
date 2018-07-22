@@ -1,0 +1,10 @@
+创建部门信息表：
+create table tb_department (departId int NOT NULL,departName VARCHAR(50) NOT NULL,parentId int NOT NULL,PRIMARY KEY(departId));
+插入部门信息：
+INSERT INTO tb_department (departId,departName,parentId) VALUES (1,'测试部',0);
+
+
+创建账户信息表：
+create table tb_account (accountId int NOT NULL,accountName VARCHAR(50) NOT NULL,passWord VARCHAR(50) NOT NULL,sex VARCHAR(10),age int,departId int NOT NULL,departName VARCHAR(50) NOT NULL,headerShip VARCHAR(50));
+插入账户信息：
+INSERT INTO tb_account (accountId,accountName,passWord,sex,age,departId,departName,headerShip) VALUES (%d,'%s','%s','%s',%d,%d,'%s','%s')

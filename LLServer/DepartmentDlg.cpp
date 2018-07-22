@@ -12,7 +12,7 @@
 IMPLEMENT_DYNAMIC(CDepartmentDlg, CDialogEx)
 
 CDepartmentDlg::CDepartmentDlg(CWnd* pParent /*=NULL*/)
-	: CDialogEx(CDepartmentDlg::IDD, pParent)
+: CBase_Dlg(CDepartmentDlg::IDD, pParent)
 {
 
 }
@@ -36,10 +36,9 @@ void CDepartmentDlg::RefreshTreeCtrl()
 {
 	auto insertDepartinfo = [&](DepartmentInfo& info,HTREEITEM hParent)
 	{
-		CString strName(info.strDepartName.c_str());
-		HTREEITEM hItem = m_treeDepartment.InsertItem(strName, 0, 1, hParent);
+		HTREEITEM hItem = m_treeDepartment.InsertItem(info.strDepartName, 1, 0, hParent);
 		
-		//将每一个节点关联一个数据，对部门结点来说，数据低字节表示当前部门id，高字节表示父部门的id
+		//将每一个节点关联一个数据，数据第字节表示当前部门id，高字节表示父部门的id
 		DWORD dwData = MAKELPARAM(info.nDepartID, info.nParentId);
 		m_treeDepartment.SetItemData(hItem, dwData);
 
@@ -54,7 +53,7 @@ void CDepartmentDlg::RefreshTreeCtrl()
 	HTREEITEM hRoot = m_treeDepartment.InsertItem(strDepartOri);
 	if (CLLMysqlOperate::getSingletonPtr())
 	{
-		//获取一级部门信息
+		//获取以及部门信息
 		vector<DepartmentInfo> vecDepartInfo = CLLMysqlOperate::getSingletonPtr()->GetDepartmentVecByParentId(0);
 		for (int i = 0; i < vecDepartInfo.size();++i)
 		{
@@ -66,7 +65,6 @@ void CDepartmentDlg::RefreshTreeCtrl()
 
 }
 
-//此函数是递归实现除一级部门外其它各层子部门的添加
 void CDepartmentDlg::InsertChildItem(HTREEITEM hParent, int nId)
 {
 	if (hParent == nullptr)
@@ -80,22 +78,24 @@ void CDepartmentDlg::InsertChildItem(HTREEITEM hParent, int nId)
 		for (int i = 0; i < vecDepart.size();++i)
 		{
 			DepartmentInfo& info = vecDepart.at(i);
-			CString strName(info.strDepartName.c_str());
-			HTREEITEM hItem = m_treeDepartment.InsertItem(strName, 0, 1, hParent);
+			HTREEITEM hItem = m_treeDepartment.InsertItem(info.strDepartName, 1, 0, hParent);
 
-			//将每一个节点关联一个数据，数据低字节表示当前部门id，高字节表示父部门的id
+			//将每一个节点关联一个数据，数据第字节表示当前部门id，高字节表示父部门的id
 			DWORD dwData = MAKELPARAM(info.nDepartID, info.nParentId);
 			m_treeDepartment.SetItemData(hItem, dwData);
 
 			InsertChildItem(hItem, info.nDepartID);
+
 		}
 	}
+
 }
 
-BEGIN_MESSAGE_MAP(CDepartmentDlg, CDialogEx)
+BEGIN_MESSAGE_MAP(CDepartmentDlg, CBase_Dlg)
 	ON_BN_CLICKED(IDC_BTN_ADD_DEPATMENT, &CDepartmentDlg::OnBnClickedBtnAddDepatment)
 	ON_NOTIFY(TVN_SELCHANGED, IDC_TREE_DEPARTMENT, &CDepartmentDlg::OnTvnSelchangedTreeDepartment)
 	ON_BN_CLICKED(IDC_BTN_DELETE_DEPATMENT, &CDepartmentDlg::OnBnClickedBtnDeleteDepatment)
+	ON_WM_CTLCOLOR()
 END_MESSAGE_MAP()
 
 
@@ -120,6 +120,7 @@ BOOL CDepartmentDlg::OnInitDialog()
 	m_treeDepartment.SetImageList(&m_ImageList, TVSIL_NORMAL);
 	RefreshTreeCtrl();
 
+
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// EXCEPTION: OCX Property Pages should return FALSE
 }
@@ -137,7 +138,7 @@ void CDepartmentDlg::OnBnClickedBtnAddDepatment()
 	}
 
 	DepartmentInfo info;
-	info.strDepartName = CUtils::w2a(strDepartName.GetString());
+	info.strDepartName = strDepartName;
 
 	HTREEITEM hItem = m_treeDepartment.GetSelectedItem();
 	if (hItem ==NULL)
@@ -146,13 +147,12 @@ void CDepartmentDlg::OnBnClickedBtnAddDepatment()
 	}
 
 	DWORD dwData = m_treeDepartment.GetItemData(hItem);
-	//获取到所选择的树形控件中的ID。然后由于上面初始化的时候DWORD的规则是低字节代表部门ID，高字节代表的是父部门的ID。
-	//这里取出来其中的低字节就代表获取到了所选择结点的部门ID值，然后要执行插入子部门操作就是以此部门ID为父节点进行插入。
-	//然后插入的子部门的结点值计算是通过获取到当前数据库中的最大部门ID值加1来得到的。
 	info.nParentId = LOWORD(dwData);
 	info.nDepartID = CLLMysqlOperate::getSingletonPtr()->GetNewDepartId();
 
-	hItem = m_treeDepartment.InsertItem(strDepartName, 0, 1, hItem);
+	hItem = m_treeDepartment.InsertItem(strDepartName, 1, 0, hItem);
+
+	
 
 	dwData = MAKELPARAM(info.nDepartID, info.nParentId);
 	m_treeDepartment.SetItemData(hItem, dwData);
@@ -160,10 +160,13 @@ void CDepartmentDlg::OnBnClickedBtnAddDepatment()
 	if (CLLMysqlOperate::getSingletonPtr())
 	{
 		CLLMysqlOperate::getSingletonPtr()->InsertDepartmentInfo(info);
+
 	}
 
 	m_editCurDepartmentInfo.SetWindowTextW(_T(""));
-	m_treeDepartment.Invalidate();	
+	m_treeDepartment.Invalidate();
+	
+	
 }
 
 
@@ -210,5 +213,20 @@ void CDepartmentDlg::OnBnClickedBtnDeleteDepatment()
 	}
 
 	m_treeDepartment.DeleteItem(hItem);
-	m_treeDepartment.Invalidate();			
+
+	m_treeDepartment.Invalidate();
+	
+	
+	
+}
+
+
+HBRUSH CDepartmentDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
+{
+	HBRUSH hbr = CBase_Dlg::OnCtlColor(pDC, pWnd, nCtlColor);
+
+	// TODO:  Change any attributes of the DC here
+
+	// TODO:  Return a different brush if the default is not desired
+	return hbr;
 }

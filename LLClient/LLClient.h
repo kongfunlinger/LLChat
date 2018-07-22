@@ -27,6 +27,10 @@ public:
 // Implementation
 
 	DECLARE_MESSAGE_MAP()
+private:
+	ULONG_PTR m_GdiPlusToken;
+public:
+	virtual int ExitInstance();
 };
 
 extern CLLClientApp theApp;

@@ -14,7 +14,7 @@
 IMPLEMENT_DYNAMIC(CAccountDlg, CDialogEx)
 
 CAccountDlg::CAccountDlg(CWnd* pParent /*=NULL*/)
-	: CDialogEx(CAccountDlg::IDD, pParent)
+	: CBase_Dlg(CAccountDlg::IDD, pParent)
 {
 
 }
@@ -32,7 +32,6 @@ void CAccountDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_STATIC_ACCOUNT_NAME, m_staAccountName);
 	DDX_Control(pDX, IDC_STATIC_ACCOUNT_PASSWORD, m_staAccountPw);
 	DDX_Control(pDX, IDC_STATIC_ACCOUNT_SEX, m_staAccountSex);
-	DDX_Control(pDX, IDC_STATIC_ACCOUNT_DEPATMENT, m_staAccountDep);
 	DDX_Control(pDX, IDC_STATIC_ACCOUNT_HS, m_staAccountHs);
 	DDX_Control(pDX, IDC_STATIC_CUR_ACCOUNT, m_staCurAccount);
 	DDX_Control(pDX, IDC_STATIC_DEPARTMENT_ID, m_staCurDepartId);
@@ -42,7 +41,7 @@ void CAccountDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT_ACCOUNT_NAME, m_editAccountName);
 	DDX_Control(pDX, IDC_EDIT_ACCOUNT_PASSWORD, m_editAccountPw);
 	DDX_Control(pDX, IDC_COMBO_SEX, m_combAccountSex);
-	DDX_Control(pDX, IDC_EDIT_ACCOUNT_DEPATMENT, m_editAccountDep);
+	DDX_Control(pDX, IDC_EDIT_ACCOUNT_DEPATMENT, m_editCurDepartName);
 	DDX_Control(pDX, IDC_EDIT_ACCOUNT_HS, m_editAccountHs);
 	DDX_Control(pDX, IDC_EDIT_CUR_ACCOUNT, m_editCurAccount);
 	DDX_Control(pDX, IDC_EDIT_CUR_ID, m_editCurAccountId);
@@ -53,10 +52,11 @@ void CAccountDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 
-BEGIN_MESSAGE_MAP(CAccountDlg, CDialogEx)
+BEGIN_MESSAGE_MAP(CAccountDlg, CBase_Dlg)
 	ON_BN_CLICKED(IDC_BUTTON_ADD_ACCOUNT, &CAccountDlg::OnBnClickedButtonAddAccount)
 	ON_BN_CLICKED(IDC_BUTTON_DELETE_ACCOUNT, &CAccountDlg::OnBnClickedButtonDeleteAccount)
 	ON_NOTIFY(TVN_SELCHANGED, IDC_TREE_ACCOUNT, &CAccountDlg::OnTvnSelchangedTreeAccount)
+	ON_WM_CTLCOLOR()
 END_MESSAGE_MAP()
 
 
@@ -114,15 +114,14 @@ void CAccountDlg::RefreshTreeCtrl()
 		{
 			return;
 		}
-		CString strName(info.strName.c_str());
 		HTREEITEM hItem;
 		if (info.strSex == "男")
 		{
-			hItem = m_treeAccount.InsertItem(strName, 2, 3, hParent);
+			hItem = m_treeAccount.InsertItem(info.strName, 2, 3, hParent);
 		}
 		else
 		{
-			hItem = m_treeAccount.InsertItem(strName, 4, 5, hParent);
+			hItem = m_treeAccount.InsertItem(info.strName, 4, 5, hParent);
 		}
 		
 		//将账户id和所属部门id加入节点数据,高位设为USER_STATE，表示此节点为用户节点
@@ -136,8 +135,7 @@ void CAccountDlg::RefreshTreeCtrl()
 		{
 			return;
 		}
-		CString strName(info.strDepartName.c_str());
-		HTREEITEM hItem = m_treeAccount.InsertItem(strName, 0, 1, hParent);
+		HTREEITEM hItem = m_treeAccount.InsertItem(info.strDepartName, 1, 0, hParent);
 
 		//将每一个节点关联一个数据，数据低字节表示当前部门id，高字节表示父部门的id
 		DWORD dwData = MAKELPARAM(info.nDepartID, info.nParentId);
@@ -184,15 +182,15 @@ void CAccountDlg::InsertChildItem(HTREEITEM hParent, int nId)
 		{
 			return;
 		}
-		CString strName(info.strName.c_str());
+
 		HTREEITEM hItem;
 		if (info.strSex == "男")
 		{
-			hItem = m_treeAccount.InsertItem(strName, 2, 3, hParent);
+			hItem = m_treeAccount.InsertItem(info.strName, 2, 3, hParent);
 		}
 		else
 		{
-			hItem = m_treeAccount.InsertItem(strName, 4, 5, hParent);
+			hItem = m_treeAccount.InsertItem(info.strName, 4, 5, hParent);
 		}
 
 		//将账户id加入节点数据,高位设为USER_STATE，表示此节点为用户节点
@@ -211,8 +209,7 @@ void CAccountDlg::InsertChildItem(HTREEITEM hParent, int nId)
 		for (int i = 0; i < vecDepart.size(); ++i)
 		{
 			DepartmentInfo& info = vecDepart.at(i);
-			CString strName(info.strDepartName.c_str());
-			HTREEITEM hItem = m_treeAccount.InsertItem(strName, 0, 1, hParent);
+			HTREEITEM hItem = m_treeAccount.InsertItem(info.strDepartName, 1, 0, hParent);
 
 			//将每一个节点关联一个数据，数据第字节表示当前部门id，高字节表示父部门的id
 			DWORD dwData = MAKELPARAM(info.nDepartID, info.nParentId);
@@ -232,6 +229,7 @@ void CAccountDlg::InsertChildItem(HTREEITEM hParent, int nId)
 
 		}
 	}
+
 }
 
 void CAccountDlg::OnBnClickedButtonDeleteAccount()
@@ -274,15 +272,14 @@ void CAccountDlg::OnBnClickedButtonAddAccount()
 		{
 			return;
 		}
-		CString strName(info.strName.c_str());
 		HTREEITEM hItem;
 		if (info.strSex == "男")
 		{
-			hItem = m_treeAccount.InsertItem(strName, 2, 3, hParent);
+			hItem = m_treeAccount.InsertItem(info.strName, 3, 2, hParent);
 		}
 		else
 		{
-			hItem = m_treeAccount.InsertItem(strName, 4, 5, hParent);
+			hItem = m_treeAccount.InsertItem(info.strName, 5, 4, hParent);
 		}
 
 		//将账户id加入节点数据,高位设为USER_STATE，表示此节点为用户节点
@@ -330,25 +327,35 @@ void CAccountDlg::OnBnClickedButtonAddAccount()
 
 	AccountInfo info;
 	info.nAccountId = _ttoi(strAccountID);
-	info.strName = CUtils::w2a(strAccountName.GetString());
-	info.strPassword = CUtils::w2a(strAccountPW.GetString());
+	info.strName =strAccountName;
+	info.strPassword = strAccountPW;
 	CString strSex;
 	m_combAccountSex.GetWindowText(strSex);
-	info.strSex = CUtils::w2a(strSex.GetString());
+	info.strSex =strSex;
 	CString strDepartId;
 	m_editCurDepartId.GetWindowTextW(strDepartId);
 	info.nDepartmentId = _ttoi(strDepartId);
 	CString strDepartName;
-	m_editAccountDep.GetWindowTextW(strDepartName);
-	info.strDepartmentName = CUtils::w2a(strDepartName.GetString());
+	m_editCurDepartName.GetWindowTextW(strDepartName);
+	info.strDepartmentName = strDepartName;
 	CString strHeaderShip;
 	m_editAccountHs.GetWindowTextW(strHeaderShip);
-	info.strHeaderShip = CUtils::w2a(strHeaderShip.GetString());
+	info.strHeaderShip = strHeaderShip;
+
 
 	//更新数据库
 	if (CLLMysqlOperate::getSingletonPtr())
 	{
-		CLLMysqlOperate::getSingletonPtr()->InsertAccountInfo(info);
+		int nErrorCode = CLLMysqlOperate::getSingletonPtr()->InsertAccountInfo(info);
+		if (nErrorCode != ERROR_SUCCESS)
+		{
+			CString strInfo;
+			strInfo.LoadStringW(IDS_IDINVALID_INPUT);
+			CString strTitle;
+			strTitle.LoadStringW(IDS_WARNING);
+			MessageBox(strInfo, strTitle, MB_ICONWARNING);
+			return;
+		}
 	}
 
 	insertAccountinfo(info,hItem);
@@ -375,15 +382,13 @@ void CAccountDlg::OnTvnSelchangedTreeAccount(NMHDR *pNMHDR, LRESULT *pResult)
 		if (nParentID == USER_STATE)
 		{
 			AccountInfo info = CLLMysqlOperate::getSingletonPtr()->GetAccountInfoById(nID);
-			CString strName(info.strName.c_str());
-			m_editCurAccount.SetWindowTextW(strName);
+			m_editCurAccount.SetWindowTextW(info.strName);
 
 			CString strId;
 			strId.Format(_T("%d"), nID);
 			m_editCurAccountId.SetWindowText(strId);
 
-			CString strDepartName(info.strDepartmentName.c_str());
-			m_editAccountDep.SetWindowText(strDepartName);
+			m_editCurDepartName.SetWindowText(info.strDepartmentName);
 
 			CString strDepartId;
 			strDepartId.Format(_T("%d"), info.nDepartmentId);
@@ -394,10 +399,9 @@ void CAccountDlg::OnTvnSelchangedTreeAccount(NMHDR *pNMHDR, LRESULT *pResult)
 			DepartmentInfo info = CLLMysqlOperate::getSingletonPtr()->GetDepartmentInfoById(nID);
 
 			m_editCurAccount.SetWindowTextW(_T(""));
-			m_editCurAccountId.SetWindowText(_T(""));
+			m_editCurAccountId.SetWindowTextW(_T(""));
 
-			CString strDepartName(info.strDepartName.c_str());
-			m_editAccountDep.SetWindowText(strDepartName);
+			m_editCurDepartName.SetWindowTextW(info.strDepartName);
 
 			CString strDepartId;
 			strDepartId.Format(_T("%d"), info.nDepartID);
@@ -406,12 +410,22 @@ void CAccountDlg::OnTvnSelchangedTreeAccount(NMHDR *pNMHDR, LRESULT *pResult)
 	}
 
 
-	//m_editAccountDep.SetWindowTextW(_T(""));
 	m_editAccountHs.SetWindowTextW(_T(""));
-	//m_editAccountId.SetWindowTextW(_T(""));
-	//m_editAccountName.SetWindowTextW(_T(""));
+	m_editAccountId.SetWindowTextW(_T(""));
+	m_editAccountName.SetWindowTextW(_T(""));
 	m_editAccountPw.SetWindowTextW(_T(""));
 	m_combAccountSex.SetCurSel(-1);
 
 	*pResult = 0;
+}
+
+
+HBRUSH CAccountDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
+{
+	HBRUSH hbr = CBase_Dlg::OnCtlColor(pDC, pWnd, nCtlColor);
+
+	// TODO:  Change any attributes of the DC here
+
+	// TODO:  Return a different brush if the default is not desired
+	return hbr;
 }

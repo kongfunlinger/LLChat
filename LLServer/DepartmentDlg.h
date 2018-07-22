@@ -1,11 +1,12 @@
 #pragma once
 #include "../Controls/StaticText.h"
 #include "../Controls/GlassButton.h"
+#include "../Controls/Base_Dlg.h"
 #include "LLMysqlOperate.h"
 
 // CDepartmentDlg dialog
 
-class CDepartmentDlg : public CDialogEx
+class CDepartmentDlg : public CBase_Dlg
 {
 	DECLARE_DYNAMIC(CDepartmentDlg)
 
@@ -39,4 +40,5 @@ public:
 	afx_msg void OnBnClickedBtnAddDepatment();
 	afx_msg void OnTvnSelchangedTreeDepartment(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnBnClickedBtnDeleteDepatment();
+	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 };

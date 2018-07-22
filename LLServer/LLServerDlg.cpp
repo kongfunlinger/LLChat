@@ -49,7 +49,7 @@ END_MESSAGE_MAP()
 
 
 CLLServerDlg::CLLServerDlg(CWnd* pParent /*=NULL*/)
-	: CDialogEx(CLLServerDlg::IDD, pParent)
+: CBase_Dlg(CLLServerDlg::IDD, pParent)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -62,7 +62,7 @@ void CLLServerDlg::DoDataExchange(CDataExchange* pDX)
 
 }
 
-BEGIN_MESSAGE_MAP(CLLServerDlg, CDialogEx)
+BEGIN_MESSAGE_MAP(CLLServerDlg, CBase_Dlg)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
@@ -204,6 +204,7 @@ void CLLServerDlg::OnPaint()
 		graphics.FillRectangle(&brush, rectF);
 
 		CDialogEx::OnPaint();
+
 	}
 }
 

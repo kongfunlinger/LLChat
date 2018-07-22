@@ -1,11 +1,13 @@
 #include "stdafx.h"
 #include "LLMysqlOperate.h"
 #include "Utils.h"
+#include "XMLOperate.h"
 
 template<> CLLMysqlOperate* CSingleton<CLLMysqlOperate>::ms_Singleton = nullptr;
 CLLMysqlOperate::CLLMysqlOperate()
 {
-	int nError = InitDataBase("127.0.0.1", "root", "wangluling!012", "liaoliaodb");
+	SQLInfo info = CUtils::GetSqlInfo();
+	int nError = InitDataBase(CUtils::w2a(info.strIp), CUtils::w2a(info.strUserName), CUtils::w2a(info.strUserPassWord), CUtils::w2a(info.strSqlName));
 	if (nError != ERROR_SUCESS)
 	{
 		AfxMessageBox(_T("初始化数据库失败"));
@@ -166,19 +168,27 @@ AccountInfo CLLMysqlOperate::GetAccountInfoById(int nAccountId)
 int CLLMysqlOperate::InsertDepartmentInfo(DepartmentInfo info)
 {
 	int nErrorCode = ERROR_SUCESS;
-	CStringA strSql;
-	strSql.Format("INSERT INTO tb_department (departId,departName,parentId) VALUES (%d,'%s',%d)",info.nDepartID,info.strDepartName.c_str(),info.nParentId);
-	nErrorCode = Execute(strSql.GetString());
+	CString strSql;
+	strSql.Format(_T("INSERT INTO tb_department (departId,departName,parentId) VALUES (%d,'%s',%d)"),info.nDepartID,info.strDepartName,info.nParentId);
+	nErrorCode = Execute(CUtils::w2a(strSql.GetString()));
+	if (nErrorCode == ERROR_SUCESS)
+	{
+		CXMLOperate::getSingletonPtr()->UpdateXml();
+	}
 	return nErrorCode;
 }
 
 int CLLMysqlOperate::InsertAccountInfo(AccountInfo info)
 {
 	int nErrorCode = ERROR_SUCESS;
-	CStringA strSql;
-	strSql.Format("INSERT INTO tb_account (accountId,accountName,passWord,sex,age,departId,departName,headerShip) VALUES (%d,'%s','%s','%s',%d,%d,'%s','%s')", 
-		info.nAccountId, info.strName.c_str(), info.strPassword.c_str(),info.strSex.c_str(),info.nAge,info.nDepartmentId,info.strDepartmentName.c_str(),info.strHeaderShip.c_str());
-	nErrorCode = Execute(strSql.GetString());
+	CString strSql;
+	strSql.Format(_T("INSERT INTO tb_account (accountId,accountName,passWord,sex,age,departId,departName,headerShip) VALUES (%d,'%s','%s','%s',%d,%d,'%s','%s')"), 
+		info.nAccountId, info.strName, info.strPassword, info.strSex, info.nAge, info.nDepartmentId, info.strDepartmentName, info.strHeaderShip);
+	nErrorCode = Execute(CUtils::w2a(strSql.GetString()));
+	if (nErrorCode == ERROR_SUCESS)
+	{
+		CXMLOperate::getSingletonPtr()->UpdateXml();
+	}
 	return nErrorCode;
 }
 
@@ -188,6 +198,10 @@ int CLLMysqlOperate::DeleteDepartmentById(int nDepartId)
 	CStringA strSql;
 	strSql.Format("DELETE FROM tb_department WHERE departId=%d", nDepartId);
 	nErrorCode = Execute(strSql.GetString());
+	if (nErrorCode == ERROR_SUCESS)
+	{
+		CXMLOperate::getSingletonPtr()->UpdateXml();
+	}
 	return nErrorCode;
 }
 
@@ -212,5 +226,9 @@ int CLLMysqlOperate::DeleteAccountById(int nAccountId)
 	CStringA strSql;
 	strSql.Format("DELETE FROM tb_account WHERE accountId=%d", nAccountId);
 	nErrorCode = Execute(strSql.GetString());
+	if (nErrorCode == ERROR_SUCESS)
+	{
+		CXMLOperate::getSingletonPtr()->UpdateXml();
+	}
 	return nErrorCode;
 }

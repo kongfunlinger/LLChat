@@ -92,7 +92,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Program Files\boost_1_67_0;C:\Program Files\MySQL\Connector.C++ 1.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\boost_1_67_0;C:\Program Files\MySQL\Connector.C++ 1.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -197,6 +197,8 @@
     <ClInclude Include="..\commonclass\CDPI.h" />
     <ClInclude Include="..\commonclass\GDIPlusH.h" />
     <ClInclude Include="..\commonclass\GraphicsUtils.h" />
+    <ClInclude Include="..\commonclass\GUI_Utils.h" />
+    <ClInclude Include="..\Controls\Base_Dlg.h" />
     <ClInclude Include="..\Controls\GlassButton.h" />
     <ClInclude Include="..\Controls\ImgButton.h" />
     <ClInclude Include="..\Controls\ImgGlassButton.h" />
@@ -208,6 +210,7 @@
     <ClInclude Include="LLServer.h" />
     <ClInclude Include="LLServerDlg.h" />
     <ClInclude Include="LogModule.h" />
+    <ClInclude Include="Markup.h" />
     <ClInclude Include="MysqlConn.h" />
     <ClInclude Include="OptionDlg.h" />
     <ClInclude Include="Resource.h" />
@@ -215,9 +218,12 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Utils.h" />
+    <ClInclude Include="XMLOperate.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\commonclass\GraphicsUtils.cpp" />
+    <ClCompile Include="..\commonclass\GUI_Utils.cpp" />
+    <ClCompile Include="..\Controls\Base_Dlg.cpp" />
     <ClCompile Include="..\Controls\GlassButton.cpp" />
     <ClCompile Include="..\Controls\ImgButton.cpp" />
     <ClCompile Include="..\Controls\ImgGlassButton.cpp" />
@@ -228,6 +234,10 @@
     <ClCompile Include="LLServer.cpp" />
     <ClCompile Include="LLServerDlg.cpp" />
     <ClCompile Include="LogModule.cpp" />
+    <ClCompile Include="Markup.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="MysqlConn.cpp" />
     <ClCompile Include="OptionDlg.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -237,6 +247,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Utils.cpp" />
+    <ClCompile Include="XMLOperate.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="LLServer.rc" />

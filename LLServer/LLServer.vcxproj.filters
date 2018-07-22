@@ -25,6 +25,9 @@
     <Filter Include="Dialog">
       <UniqueIdentifier>{8be91ae1-826a-4f47-b6af-f22268f680f8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="XML">
+      <UniqueIdentifier>{73a6b4e5-777d-4252-aa81-34f6830af44d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -96,6 +99,18 @@
     <ClInclude Include="LLMysqlOperate.h">
       <Filter>Mysql</Filter>
     </ClInclude>
+    <ClInclude Include="Markup.h">
+      <Filter>XML</Filter>
+    </ClInclude>
+    <ClInclude Include="XMLOperate.h">
+      <Filter>XML</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Controls\Base_Dlg.h">
+      <Filter>Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\commonclass\GUI_Utils.h">
+      <Filter>Commonclass</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LLServer.cpp">
@@ -142,6 +157,18 @@
     </ClCompile>
     <ClCompile Include="LLMysqlOperate.cpp">
       <Filter>Mysql</Filter>
+    </ClCompile>
+    <ClCompile Include="Markup.cpp">
+      <Filter>XML</Filter>
+    </ClCompile>
+    <ClCompile Include="XMLOperate.cpp">
+      <Filter>XML</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Controls\Base_Dlg.cpp">
+      <Filter>Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\commonclass\GUI_Utils.cpp">
+      <Filter>Commonclass</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -4,6 +4,11 @@
 // but are changed infrequently
 
 #pragma once
+#define DLL_EXT_CLASS
+#define DLLEXPORT
+#ifndef _SECURE_ATL
+#define _SECURE_ATL 1
+#endif
 
 #ifndef VC_EXTRALEAN
 #define VC_EXTRALEAN            // Exclude rarely-used stuff from Windows headers
@@ -21,7 +26,16 @@
 
 
 #include <afxdisp.h>        // MFC Automation classes
+#include "Afxsock.h"
 
+
+//GDI+头文件引用
+
+#include "../commonclass/CDPI.h"
+#include "../commonclass/GDIPlusH.h"
+#include "../commonclass/GraphicsUtils.h"
+
+#pragma comment(lib,"Gdiplus.lib")
 
 
 #ifndef _AFX_NO_OLE_SUPPORT
@@ -35,7 +49,15 @@
 
 
 
+#include "io.h"
+#include <string>
+#include <vector>
+#include <iostream>
+using namespace std;
 
+#include "CommonHeader.h"
+
+extern CDPI g_dpi;
 
 
 

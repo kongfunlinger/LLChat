@@ -8,8 +8,9 @@
 #include "OptionDlg.h"
 #include "DepartmentDlg.h"
 #include "AccountDlg.h"
+#include "../Controls/Base_Dlg.h"
 // CLLServerDlg dialog
-class CLLServerDlg : public CDialogEx
+class CLLServerDlg : public CBase_Dlg
 {
 // Construction
 public:
